@@ -2,6 +2,7 @@
 set -euo pipefail
 
 base_url="${BASE_URL:-http://127.0.0.1:8080}"
+base_url="${base_url%/}"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 output_dir="${1:-$script_dir/http-snapshots}"
 mkdir -p "$output_dir"
@@ -81,6 +82,7 @@ if ((connection_failure)); then
   exit 1
 fi
 
+# Publish only after all captures succeed; every staging file must exist.
 for entry in "${snapshots[@]}"; do
   name="${entry%%|*}"
   mv "$staging_dir/$name" "$output_dir/$name"
