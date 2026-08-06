@@ -6,10 +6,12 @@ base_url="${base_url%/}"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 output_dir="${1:-$script_dir/http-snapshots}"
 mkdir -p "$output_dir"
+output_parent="$(dirname -- "$output_dir")"
+output_name="$(basename -- "$output_dir")"
 
 raw="$(mktemp)"
 body="$(mktemp)"
-staging_dir="$(mktemp -d)"
+staging_dir="$(mktemp -d "$output_parent/.${output_name}.staging.XXXXXX")"
 cleanup() {
   rm -f "$raw" "$body"
   rm -rf "$staging_dir"

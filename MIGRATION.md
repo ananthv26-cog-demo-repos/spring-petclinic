@@ -15,6 +15,8 @@ Validation gate for every step: run `mvn test` with the JDK specified for that s
 
 `baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. An unreachable app produces no replacement files and exits non-zero. The normalization uses GNU sed's `s///I` flag, so the gate is GNU/Linux-only and aborts on BSD/macOS sed. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass. Snapshots embed pinned WebJars versions and host-relative resource URLs, so a dependency bump in Step 3 may produce version-only diffs; reviewers should explain those diffs rather than normalize them away.
 
+The row ordering on `/owners?lastName=` and `/vets.html` is not guaranteed by the queries: `OwnerRepository.findByLastName` uses `SELECT DISTINCT ... left join fetch` without `ORDER BY`, and vets come from `VetRepository.findAll()`. HSQLDB currently returns insertion order, which is why the committed snapshots are in id order. Hibernate 5.6/6.x may change join-fetch de-duplication or result ordering without a behavioral regression, producing a large row reshuffle. Investigate a pure reordering diff as a possible ordering change; if ordering must be stabilized, add an explicit `ORDER BY` rather than sorting rows before diffing.
+
 ---
 
 ## Step 1 — JUnit 4 → JUnit 5 (risk: LOW)
