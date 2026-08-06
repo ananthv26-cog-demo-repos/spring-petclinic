@@ -21,7 +21,7 @@ Validation gate for every step: `JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn
 
 Test-scope only; no `src/main` change, so zero runtime impact. Confined to `pom.xml` test dependencies and the 10 test classes.
 
-- `@RunWith(SpringRunner.class)` → `@ExtendWith(SpringExtension.class)`. Spring 4.3 has no `SpringExtension` of its own, so this comes from `org.springframework:spring-test-junit5`, the bridge artifact published for exactly this Boot 1.5 + Jupiter combination.
+- `@RunWith(SpringRunner.class)` → `@ExtendWith(SpringExtension.class)`. Spring 4.3 has no `SpringExtension` of its own, so Step 1 uses `com.github.sbrannen:spring-test-junit5:1.5.0`. This artifact was never published to Maven Central; JitPack builds it on demand from a GitHub tag, so it is neither signed nor guaranteed to remain available. The version is pinned, and this is an accepted, time-boxed Step 1 risk. Step 3 removes both this dependency and the `<repositories>` JitPack entry when Boot 2.7 manages Jupiter support natively.
 - `@RunWith(MockitoJUnitRunner.class)` → explicit `MockitoAnnotations.initMocks` in `@BeforeEach`. Boot 1.5 manages Mockito 1.10, which predates `mockito-junit-jupiter`; initializing mocks directly avoids pulling a new Mockito major version into this step and keeps the risk in the version bumps, not here.
 - `org.junit.Test` → `org.junit.jupiter.api.Test`; `@Before` → `@BeforeEach`; `@Ignore` → `@Disabled` (`CrashControllerTests` must stay skipped, preserving the 1 skipped test).
 - `@Test(expected = ParseException.class)` → `assertThrows`.
