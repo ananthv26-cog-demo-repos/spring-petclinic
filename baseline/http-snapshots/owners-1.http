@@ -125,7 +125,7 @@ HTTP status: 200
             <dt>Name</dt>
             <dd >Leo</dd></dd>
             <dt>Birth Date</dt>
-            <dd ><DATE></dd></dd>
+            <dd >2010-09-07</dd></dd>
             <dt>Type</dt>
             <dd >cat</dd></dd>
           </dl>

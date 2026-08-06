@@ -9,11 +9,11 @@ The migration is split into steps ordered by escalating risk. Each step is lande
 - `baseline/test-results.md` — 41 tests, 0 failures, 1 skipped (`CrashControllerTests` is `@Ignore`d).
 - `baseline/http-snapshots/` — normalized responses for `/`, `/vets.html`, `/owners?lastName=`, `/owners/1`, produced by `baseline/snapshot.sh` so before/after runs can be diffed byte-for-byte.
 
-Validation gate for every step: `JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn test` (JDK 17 from Step 2 on) matches the recorded test count and pass/fail/skip split, and re-running `baseline/snapshot.sh` into a scratch directory diffs clean against `baseline/http-snapshots/`.
+Validation gate for every step: run `mvn test` with the JDK specified for that step (Step 1 uses Java 8 at `/usr/lib/jvm/java-8-openjdk-amd64` in this environment; Step 2 onward uses JDK 17), and match the recorded test count and pass/fail/skip split. Re-run `baseline/snapshot.sh` into a scratch directory and diff clean against `baseline/http-snapshots/`. The Java path is specific to this environment and is not universal.
 
 ### Snapshot gate caveats
 
-`baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass. Snapshots embed pinned WebJars versions and host-relative resource URLs, so a dependency bump in Step 3 may produce version-only diffs; reviewers should explain those diffs rather than normalize them away.
+`baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. An unreachable app produces no replacement files and exits non-zero. The normalization uses GNU sed's `s///I` flag, so the gate is GNU/Linux-only and aborts on BSD/macOS sed. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass. Snapshots embed pinned WebJars versions and host-relative resource URLs, so a dependency bump in Step 3 may produce version-only diffs; reviewers should explain those diffs rather than normalize them away.
 
 ---
 

@@ -29,6 +29,8 @@ snapshot() {
   fi
   if [[ "$status" == "000" ]]; then
     connection_failure=1
+    printf 'snapshot: %s unavailable (HTTP status 000)\n' "$path" >&2
+    return
   fi
   sed -E \
     -e 's/([?&;])jsessionid=[^"'\''< >?#;]+/\1/gI' \
@@ -36,8 +38,6 @@ snapshot() {
     -e 's/(name=(_csrf|csrf)[^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
     -e 's/(name=(_csrf|csrf)[^>]*value=)[^"'\''< >]*/\1<CSRF>/gI' \
     -e 's/(value=["'\''"])[^"'\''"]*(["'\''"][^>]*name=["'\''"](_csrf|csrf)["'\''"])/\1<CSRF>\2/gI' \
-    -e 's/[0-9]{4}-[0-9]{2}-[0-9]{2}([T ][0-9]{2}:[0-9]{2}(:[0-9]{2})?)?/<DATE>/g' \
-    -e 's/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/<DATE>/g' \
     "$body" > "$raw"
   {
     printf 'HTTP status: %s\n\n' "$status"
