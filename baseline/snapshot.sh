@@ -6,10 +6,16 @@ base_url="${base_url%/}"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 if (( $# != 1 )); then
   printf 'usage: %s SCRATCH_DIR\n' "${BASH_SOURCE[0]}" >&2
-  printf 'refusing to overwrite the committed baseline; pass an explicit output directory\n' >&2
+  printf 'pass an explicit scratch directory; the committed reference set is regenerated deliberately, not by re-running the gate\n' >&2
   exit 2
 fi
-output_dir="$1"
+output_dir="$(realpath -m -- "$1")"
+reference_dir="$script_dir/http-snapshots"
+if [[ "$output_dir" == "$reference_dir" ]]; then
+  printf 'refusing to overwrite the committed baseline at %s; regenerate it deliberately, not by re-running the gate\n' \
+    "$reference_dir" >&2
+  exit 2
+fi
 mkdir -p "$output_dir"
 output_parent="$(dirname -- "$output_dir")"
 output_name="$(basename -- "$output_dir")"
