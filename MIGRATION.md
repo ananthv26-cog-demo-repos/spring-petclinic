@@ -9,7 +9,7 @@ The migration is split into steps ordered by escalating risk. Each step is lande
 - `baseline/test-results.md` — 41 tests, 0 failures, 1 skipped (`CrashControllerTests` is `@Ignore`d).
 - `baseline/http-snapshots/` — normalized responses for `/`, `/vets.html`, `/owners?lastName=`, `/owners/1`, produced by `baseline/snapshot.sh` so before/after runs can be diffed byte-for-byte.
 
-Validation gate for every step: run `mvn test` with the JDK specified for that step (Step 1 uses Java 8 at `/usr/lib/jvm/java-8-openjdk-amd64` in this environment; Step 2 onward uses JDK 17), and match the recorded test count and pass/fail/skip split. Re-run `baseline/snapshot.sh` into a scratch directory and diff clean against `baseline/http-snapshots/`. The Java path is specific to this environment and is not universal.
+Validation gate for every step: run `mvn test` with the JDK specified for that step (Step 1 uses Java 8 at `/usr/lib/jvm/java-8-openjdk-amd64` in this environment; Step 2 onward uses JDK 17), and match the recorded test count and pass/fail/skip split. Re-run `baseline/snapshot.sh /tmp/petclinic-snapshots` into an explicit scratch directory and diff clean against `baseline/http-snapshots/`; the script refuses to run without an output directory so the committed reference set cannot be overwritten accidentally. The Java path is specific to this environment and is not universal.
 
 ### Snapshot gate caveats
 

@@ -4,7 +4,12 @@ set -euo pipefail
 base_url="${BASE_URL:-http://127.0.0.1:8080}"
 base_url="${base_url%/}"
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-output_dir="${1:-$script_dir/http-snapshots}"
+if (( $# != 1 )); then
+  printf 'usage: %s SCRATCH_DIR\n' "${BASH_SOURCE[0]}" >&2
+  printf 'refusing to overwrite the committed baseline; pass an explicit output directory\n' >&2
+  exit 2
+fi
+output_dir="$1"
 mkdir -p "$output_dir"
 output_parent="$(dirname -- "$output_dir")"
 output_name="$(basename -- "$output_dir")"
