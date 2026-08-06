@@ -11,6 +11,10 @@ The migration is split into steps ordered by escalating risk. Each step is lande
 
 Validation gate for every step: `JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn test` (JDK 17 from Step 2 on) matches the recorded test count and pass/fail/skip split, and re-running `baseline/snapshot.sh` into a scratch directory diffs clean against `baseline/http-snapshots/`.
 
+### Snapshot gate caveats
+
+`baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass.
+
 ---
 
 ## Step 1 — JUnit 4 → JUnit 5 (risk: LOW)
