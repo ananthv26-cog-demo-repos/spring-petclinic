@@ -36,6 +36,7 @@ snapshot() {
 
   : > "$body"
   if curl_info="$(curl -sS -L -o "$body" \
+    --connect-timeout 10 --max-time 60 \
     -w '%{http_code}\t%{num_redirects}\t%{url_effective}' \
     "$base_url$path")"; then
     :
@@ -59,7 +60,7 @@ snapshot() {
     effective_path="/"
   fi
   sed -E \
-    -e 's/([?&;])jsessionid=[^"'\''< >?#;]+/\1/gI' \
+    -e 's/([?&;])jsessionid=[^"'\''< >?#;&]+/\1/gI' \
     -e 's/(name=["'\''"](_csrf|csrf)["'\''"][^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
     -e 's/(name=["'\''"](_csrf|csrf)["'\''"][^>]*value=)[^"'\''< >]+/\1<CSRF>/gI' \
     -e 's/(name=(_csrf|csrf)[^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
