@@ -13,7 +13,7 @@ Validation gate for every step: `JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn
 
 ### Snapshot gate caveats
 
-`baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass.
+`baseline/snapshot.sh` requires curl with support for following redirects and writing the response status via `-w '%{http_code}'`; it does not require `--fail-with-body`, so HTTP error responses are captured rather than aborting the run. Snapshot comparisons remain byte-for-byte, including whitespace. In Steps 3–4, any whitespace-only rendering differences caused by Thymeleaf 3 or `PathPatternParser` still require a line-by-line explanation; do not switch to whitespace-normalized diffing to make the gate pass. Snapshots embed pinned WebJars versions and host-relative resource URLs, so a dependency bump in Step 3 may produce version-only diffs; reviewers should explain those diffs rather than normalize them away.
 
 ---
 

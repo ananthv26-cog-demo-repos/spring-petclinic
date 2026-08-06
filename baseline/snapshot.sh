@@ -13,16 +13,22 @@ cleanup() {
 }
 trap cleanup EXIT
 
+connection_failure=0
+
 snapshot() {
   local name="$1"
   local path="$2"
   local status
 
+  : > "$body"
   if status="$(curl -sS -L -o "$body" -w '%{http_code}' \
     "$base_url$path")"; then
     :
   else
     status="${status:-000}"
+  fi
+  if [[ "$status" == "000" ]]; then
+    connection_failure=1
   fi
   sed -E \
     -e 's/([?&;])jsessionid=[^"'\''< >?#;]+/\1/gI' \
@@ -30,7 +36,7 @@ snapshot() {
     -e 's/(name=(_csrf|csrf)[^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
     -e 's/(name=(_csrf|csrf)[^>]*value=)[^"'\''< >]*/\1<CSRF>/gI' \
     -e 's/(value=["'\''"])[^"'\''"]*(["'\''"][^>]*name=["'\''"](_csrf|csrf)["'\''"])/\1<CSRF>\2/gI' \
-    -e 's/[0-9]{4}-[0-9]{2}-[0-9]{2}([T ][0-9:.+-]+)?/<DATE>/g' \
+    -e 's/[0-9]{4}-[0-9]{2}-[0-9]{2}([T ][0-9]{2}:[0-9]{2}(:[0-9]{2})?)?/<DATE>/g' \
     -e 's/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/<DATE>/g' \
     "$body" > "$raw"
   {
@@ -43,3 +49,7 @@ snapshot "root.http" "/"
 snapshot "vets.html.http" "/vets.html"
 snapshot "owners-lastName.http" "/owners?lastName="
 snapshot "owners-1.http" "/owners/1"
+
+if ((connection_failure)); then
+  exit 1
+fi
