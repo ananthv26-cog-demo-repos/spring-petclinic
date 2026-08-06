@@ -61,6 +61,8 @@ snapshot() {
   if [[ "$effective_path" == "$effective_url" || -z "$effective_path" ]]; then
     effective_path="/"
   fi
+  effective_path="$(printf '%s\n' "$effective_path" | sed -E \
+    's/([?&;])jsessionid=[^"'\''< >?#;&]+/\1/gI')"
   sed -E \
     -e 's/([?&;])jsessionid=[^"'\''< >?#;&]+/\1/gI' \
     -e 's/(name=["'\''"](_csrf|csrf)["'\''"][^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
