@@ -30,6 +30,7 @@
 
     <cobertura.version>2.7</cobertura.version>
     <junit.jupiter.version>5.5.0</junit.jupiter.version>
+    <junit.platform.version>1.5.0</junit.platform.version>
     <spring-test-junit5.version>1.5.0</spring-test-junit5.version>
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
@@ -90,6 +91,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
 

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,6 +35,11 @@ public class PetTypeFormatterTests {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         this.petTypeFormatter = new PetTypeFormatter(pets);
+    }
+
+    @AfterEach
+    public void validateMockitoUsage() {
+        Mockito.validateMockitoUsage();
     }
 
     @Test
