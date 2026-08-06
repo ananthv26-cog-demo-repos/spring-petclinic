@@ -35,8 +35,9 @@ snapshot() {
   sed -E \
     -e 's/([?&;])jsessionid=[^"'\''< >?#;]+/\1/gI' \
     -e 's/(name=["'\''"](_csrf|csrf)["'\''"][^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
+    -e 's/(name=["'\''"](_csrf|csrf)["'\''"][^>]*value=)[^"'\''< >]+/\1<CSRF>/gI' \
     -e 's/(name=(_csrf|csrf)[^>]*value=["'\''"])[^"'\''"]*/\1<CSRF>/gI' \
-    -e 's/(name=(_csrf|csrf)[^>]*value=)[^"'\''< >]*/\1<CSRF>/gI' \
+    -e 's/(name=(_csrf|csrf)[^>]*value=)[^"'\''< >]+/\1<CSRF>/gI' \
     -e 's/(value=["'\''"])[^"'\''"]*(["'\''"][^>]*name=["'\''"](_csrf|csrf)["'\''"])/\1<CSRF>\2/gI' \
     "$body" > "$raw"
   {
