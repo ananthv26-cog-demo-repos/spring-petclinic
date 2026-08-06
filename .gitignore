@@ -6,4 +6,4 @@ target/*
 *.iml
 /target
 _site/
-baseline/.http-snapshots.staging.*
+baseline/.*.staging.*

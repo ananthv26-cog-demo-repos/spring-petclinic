@@ -11,7 +11,7 @@ if (( $# != 1 )); then
 fi
 output_dir="$(realpath -m -- "$1")"
 reference_dir="$script_dir/http-snapshots"
-if [[ "$output_dir" == "$reference_dir" ]]; then
+if [[ "$output_dir" == "$reference_dir" || "$output_dir" -ef "$reference_dir" ]]; then
   printf 'refusing to overwrite the committed baseline at %s; regenerate it deliberately, not by re-running the gate\n' \
     "$reference_dir" >&2
   exit 2
