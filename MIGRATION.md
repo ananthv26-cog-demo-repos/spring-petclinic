@@ -45,6 +45,7 @@ Rollback: revert the commit; the runtime JDK is selected per environment, so a r
 First step that changes production code and runtime behaviour.
 
 - Parent 1.5.4 → 2.7.x, which brings Spring Framework 5.3, Hibernate 5.6, Thymeleaf 3, Mockito 4 and JUnit 5 as the managed default (Step 1 becomes native and the bridge artifact is removed).
+- The bridge ships `org.springframework.test.context.junit.jupiter.SpringExtension`, the exact FQN Spring Framework 5+ provides natively. Removing the `spring-test-junit5` dependency and the JitPack `<repositories>` block is therefore a precondition in the same commit as the parent bump; afterwards, verify that only one test-classpath jar provides this class, because leaving both jars makes resolution classpath-order dependent while the unchanged imports continue to compile silently.
 - Configuration property renames (`spring.datasource.*`, `spring.jpa.*`), `WebMvcConfigurerAdapter` → `WebMvcConfigurer`, `CrudRepository` return types becoming `Optional`, Actuator endpoint paths moving under `/actuator`, and relaxed-binding changes in `application.properties`.
 - Thymeleaf 2 → 3 changes template resolution and can alter rendered markup: this is the step where the HTTP snapshot diff is most likely to be non-empty, and any diff must be explained line by line rather than accepted.
 - `spring-boot-starter-web` no longer pulls in the same defaults; the `wro4j` LESS pipeline and the WebJars version pins need re-verification.
